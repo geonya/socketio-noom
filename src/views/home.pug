@@ -1,10 +1,16 @@
 extends base
 
 block content
-    h3 Let's play with SocketIo
 
-    div#welcome
+    div#join
+        form#joinForm
+            input(placeholder="room name", required, type="text")#roomname
+            input(placeholder="nickname", type="text")#nickname
+            button Save
+    div#room
+        h3
+        ul
         form
-            input(placeholder="room name", required, type="text")
-            button Join
-    
+            input(placeholder="message", required, type="text")
+            button Send
+            
