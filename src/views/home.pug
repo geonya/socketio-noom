@@ -2,17 +2,32 @@ extends base
 
 block content
 
-    div#join
-        form#joinForm
-            input(placeholder="room name", required, type="text")#roomname
-            input(placeholder="nickname", type="text")#nickname
-            button Save
-    div#room
-        h3
-        ul#messageList
-        form
-            input(placeholder="message", required, type="text")
-            button Send
-        hr
-        h4 Room List :
-        ul#roomList
+    main
+        section
+            div#chatHeader
+                div#chatTitle
+                    span
+                div#userCount
+                    span
+                button#leaveBtn
+                    i.fas.fa-sign-out-alt
+            div#messagePrint
+                ul
+            div#messageForm
+                form
+                    input(required, type="text")
+                    button
+                        i.fas.fa-arrow-up
+            
+        nav
+            div#navTitle
+                h1 Kokoa Chat
+            form#nickNameForm
+                    input(placeholder="닉네임을 입력해주세요.", type="text")#nickNameInput
+                    button Save
+            form#createRoom
+                    input(placeholder="방 이름을 입력해주세요.", type="text")#createRoomInput
+                    button Create  
+            div#roomBoardTitle
+                span Chat Rooms
+            div#roomBoard

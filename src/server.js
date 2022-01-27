@@ -29,23 +29,30 @@ const getPublicRooms = () => {
 	return publicRooms;
 };
 
+const countUser = (room) => {
+	return wsServer.sockets.adapter.rooms.get(room)?.size;
+};
+
 wsServer.on("connection", (socket) => {
+	wsServer.sockets.emit("room_change", getPublicRooms());
 	socket.onAny((event) => {
-		console.log(wsServer.sockets.adapter);
 		console.log(`Socket Event: ${event}`);
 	});
 	socket.on("enter_room", (room, nick, done) => {
 		socket.join(room);
-		done();
-		socket["nickname"] = nick || "anonymous";
-		socket.to(room).emit("join", socket.nickname); //send message everybody except me
-		wsServer.sockets.emit("room_change", getPublicRooms());
+		socket["nickname"] = nick || "";
+		done(countUser(room));
+		socket.to(room).emit("join", socket.nickname, countUser(room)); //send message everybody except me
+		wsServer.sockets.emit("room_change", getPublicRooms(), countUser(room));
 	});
 	socket.on("disconnecting", () => {
 		//before socket has left room
 		socket.rooms.forEach((room) =>
-			socket.to(room).emit("bye", socket.nickname)
+			socket.to(room).emit("bye", socket.nickname, countUser(room) - 1)
 		);
+	});
+	socket.on("nickname", (nick) => {
+		socket["nickname"] = nick || "";
 	});
 	socket.on("disconnect", () => {
 		//just socket has left room
@@ -54,6 +61,11 @@ wsServer.on("connection", (socket) => {
 
 	socket.on("new_message", (message, room, done) => {
 		socket.to(room).emit("new_message", socket.nickname, message);
+		done();
+	});
+	socket.on("leave_room", (room, done) => {
+		socket.to(room).emit("bye", socket.nickname, countUser(room) - 1);
+		socket.leave(room);
 		done();
 	});
 });
