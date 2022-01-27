@@ -9,7 +9,7 @@ let roomName;
 let nickName;
 
 const addMessage = (message) => {
-	const ul = room.querySelector("ul");
+	const ul = room.querySelector("#messageList");
 	const li = document.createElement("li");
 	li.innerText = message;
 	ul.appendChild(li);
@@ -59,4 +59,17 @@ socket.on("bye", (nickname) => {
 
 socket.on("new_message", (nickname, message) => {
 	addMessage(`${nickname} : ${message}`);
+});
+
+socket.on("room_change", (rooms) => {
+	const roomList = document.querySelector("#roomList");
+	roomList.innerHTML = "";
+	if (rooms.length === 0) {
+		return;
+	}
+	rooms.forEach((room) => {
+		const li = document.createElement("li");
+		li.innerText = room;
+		roomList.append(li);
+	});
 });
